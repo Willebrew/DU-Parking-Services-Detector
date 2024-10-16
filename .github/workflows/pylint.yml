@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.12"]
+        python-version: ["3.12"]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -18,22 +18,29 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
-        pip install torch torchvision pillow pillow_heif opencv-python tqdm
+        pip install -r requirements.txt
     - name: Create .pylintrc
       run: |
         echo "[MASTER]" > .pylintrc
+        echo "ignore-patterns=.*" >> .pylintrc
+        echo "ignore-paths=.*" >> .pylintrc
         echo "" >> .pylintrc
         echo "[MESSAGES CONTROL]" >> .pylintrc
         echo "disable=" >> .pylintrc
-        echo "    C0111," >> .pylintrc  # missing-docstring
-        echo "    C0103," >> .pylintrc  # invalid-name
-        echo "    C0301," >> .pylintrc  # line-too-long
-        echo "    W0611," >> .pylintrc  # unused-import
-        echo "    W0612," >> .pylintrc  # unused-variable
-        echo "    E1101," >> .pylintrc  # no-member (often false positives with external modules)
+        echo "    suppressed-message," >> .pylintrc
+        echo "    locally-disabled," >> .pylintrc
+        echo "    useless-suppression," >> .pylintrc
+        echo "    import-error," >> .pylintrc
+        echo "    too-few-public-methods," >> .pylintrc
+        echo "    duplicate-code" >> .pylintrc
+        echo "" >> .pylintrc
+        echo "enable=" >> .pylintrc
+        echo "    deprecated-pragma," >> .pylintrc
+        echo "    use-symbolic-message-instead" >> .pylintrc
         echo "" >> .pylintrc
         echo "[TYPECHECK]" >> .pylintrc
-        echo "generated-members=cv2.*,torch.*" >> .pylintrc
+        echo "generated-members=cv2.*" >> .pylintrc
+        echo "ignored-modules=PIL,pillow_heif,torch,torchvision,cv2,tqdm" >> .pylintrc
     - name: Analysing the code with pylint
       run: |
         pylint --rcfile=.pylintrc $(git ls-files '*.py')

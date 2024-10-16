@@ -20,20 +20,13 @@ import torch
 from torch import nn
 from torch import optim
 from torch.utils.data import DataLoader
-from torchvision import transforms
 from torchvision.datasets import CocoDetection
 from torchvision.models import resnet18, ResNet18_Weights
 from tqdm import tqdm
+from model_utils import get_transform
 
 # Define the image transformation pipeline
-transform = transforms.Compose([
-    transforms.Resize((256, 256)),
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(10),
-    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
+transform = get_transform(train = True)
 
 
 class ParkingVehicleDataset(CocoDetection):

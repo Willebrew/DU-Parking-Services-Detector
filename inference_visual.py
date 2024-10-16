@@ -15,15 +15,11 @@ Dependencies:
 """
 import torch
 from PIL import Image
-from torchvision import transforms
 from torchvision.models import resnet18
+from model_utils import get_transform
 
 # Define the image transformation pipeline
-transform = transforms.Compose([
-    transforms.Resize((256, 256)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
+transform = get_transform()
 
 # Load ResNet-18
 model = resnet18()
